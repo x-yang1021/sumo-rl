@@ -104,7 +104,7 @@ class TrafficSignal:
                         yellow_state += p1.state[s]
                 self.yellow_dict[(i,j)] = len(self.all_phases)
                 self.all_phases.append(self.sumo.trafficlight.Phase(self.yellow_time, yellow_state))
-                #print('all', self.all_phases,'yellow time', self.yellow_time, 'yellow state', yellow_state)
+                print('all', self.all_phases,'yellow time', self.yellow_time, 'yellow state', yellow_state)
                 #print('yellow time', self.yellow_time, 'yellow state', yellow_state)
                 #print('all phase', self.green_phase,'slice', self.all_phases[self.green_phase])
 
