@@ -4,6 +4,7 @@ import sys
 from datetime import datetime
 import random
 import sumo_rl.environment.traffic_signal
+import numpy as np
 
 if 'SUMO_HOME' in os.environ:
     tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
@@ -64,8 +65,12 @@ if __name__ == '__main__':
 
         ql_agents = {ts: a for ts in env.ts_ids}
 
+        print(traci.junction.getPosition('t')[0])
+
         done = {'__all__': False}
         infos = []
+        accident_time = []
+        normal_time = []
         if args.fixed:
             while not done['__all__']:
                 _, _, done, _ = env.step({})
@@ -74,12 +79,17 @@ if __name__ == '__main__':
                 actions = {ts: ql_agents[ts].act() for ts in ql_agents.keys()}
 
                 if 'flow_we.100' in traci.vehicle.getIDList() and counter < 100:
-                    traci.vehicle.setStop(vehID='flow_we.100', edgeID='w_t', pos=70, duration=10)
+                    a = traci.vehicle.getRoadID('flow_we.100')
+                    traci.vehicle.setSpeed(vehID='flow_we.100', speed=0)
                     counter += 1
+
                     # t = traci.vehicle.getWaitingTime(vehID='flow_we.100')
                     # print(t)
+
                 else:
-                    pass
+                    normal_time.append(traci.lane.getTraveltime('w_t_0'))
+
+
                 s, r, done, _ = env.step(action=actions)
                 # if 'flow_we.500' in traci.vehicle.getIDList():
                 #     traci.vehicle.resume(vehID='flow_we.100')
@@ -100,7 +110,6 @@ if __name__ == '__main__':
         # df.to_csv(filepath)
         #env.save_csv(out_csv, run)
         env.close()
-
 
 
 
